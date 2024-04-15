@@ -75,7 +75,7 @@ macro_rules! dlog {
     //($($t:tt)*) => { println!($($t)*) }
 }
 
-fn get_info(doc: &Document) -> Option<&Dictionary> {
+pub fn get_info(doc: &Document) -> Option<&Dictionary> {
     match doc.trailer.get(b"Info") {
         Ok(&Object::Reference(ref id)) => {
             match doc.get_object(*id) {
@@ -88,7 +88,7 @@ fn get_info(doc: &Document) -> Option<&Dictionary> {
     None
 }
 
-fn get_catalog(doc: &Document) -> &Dictionary {
+pub fn get_catalog(doc: &Document) -> &Dictionary {
     match doc.trailer.get(b"Root").unwrap() {
         &Object::Reference(ref id) => {
             match doc.get_object(*id) {
@@ -101,7 +101,7 @@ fn get_catalog(doc: &Document) -> &Dictionary {
     panic!();
 }
 
-fn get_pages(doc: &Document) -> &Dictionary {
+pub fn get_pages(doc: &Document) -> &Dictionary {
     let catalog = get_catalog(doc);
     match catalog.get(b"Pages").unwrap() {
         &Object::Reference(ref id) => {
@@ -148,7 +148,7 @@ const PDFDocEncoding: &'static [u16] = &[
     0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x00fa, 0x00fb,
     0x00fc, 0x00fd, 0x00fe, 0x00ff];
 
-fn pdf_to_utf8(s: &[u8]) -> String {
+pub fn pdf_to_utf8(s: &[u8]) -> String {
     if s.len() > 2 && s[0] == 0xfe && s[1] == 0xff {
         return UTF_16BE.decode(&s[2..], DecoderTrap::Strict).unwrap()
     } else {
@@ -159,7 +159,7 @@ fn pdf_to_utf8(s: &[u8]) -> String {
     }
 }
 
-fn to_utf8(encoding: &[u16], s: &[u8]) -> String {
+pub fn to_utf8(encoding: &[u16], s: &[u8]) -> String {
     if s.len() > 2 && s[0] == 0xfe && s[1] == 0xff {
         return UTF_16BE.decode(&s[2..], DecoderTrap::Strict).unwrap()
     } else {
